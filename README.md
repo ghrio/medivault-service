@@ -12,7 +12,6 @@ Medivault is a secure, RESTful microservice for storing and managing patient dat
 - [Usage](#usage)
 - [API Endpoints](#api-endpoints)
 - [Testing](#testing)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## Overview
@@ -21,11 +20,7 @@ Medivault provides a REST API that allows you to perform CRUD (Create, Read, Upd
 
 ## Features
 
-- **RESTful API Design:** Intuitive endpoints using plural nouns and versioning (e.g., `/v1/patients`).
-- **Type-Safe Database Access:** sqlc generates efficient, type-safe Go code from your SQL queries.
-- **Security Focused:** Includes HTTPS (when deployed), input validation, and plans for JWT authentication.
-- **Compliance Ready:** Designed with privacy and regulatory guidelines in mind.
-- **Separation of Concerns:** Clear separation between HTTP handling, business logic, and data access.
+WIP - Coming soon!
 
 ## Tech Stack
 
@@ -33,6 +28,13 @@ Medivault provides a REST API that allows you to perform CRUD (Create, Read, Upd
 - **Web Framework:** Standard `net/http`
 - **Database Access:** sqlc (SQL query code generation)
 - **Database:** PostgreSQL (or another SQL database of your choice)
+- **Security:**
+  - JWT (JSON Web Tokens) for authentication
+  - Bcrypt for password hashing
+  - HTTPS for secure communication
+- **Code Quality:**
+  - Go's `fmt` and `vet` tools for code formatting and static analysis
+  - sqlc for type-safe SQL query generation
 - **Other Tools:**
   - Git for version control
   - Go's built-in testing framework for unit and integration tests
@@ -45,3 +47,12 @@ Medivault provides a REST API that allows you to perform CRUD (Create, Read, Upd
    git clone https://github.com/yourusername/medivault.git
    cd medivault
    ```
+
+## Configuration
+WIP - Coming soon!
+## Usage
+WIP - Coming soon!
+## API Endpoints
+WIP - Coming soon!
+## Testing
+WIP - Coming soon!
