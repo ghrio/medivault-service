@@ -2,8 +2,6 @@ package repository
 
 import (
 	"context"
-
-	// sqlc works well with sqlx
 	models "medivault-service/internal/db/generated"
 )
 

@@ -34,7 +34,7 @@ CREATE TABLE patient_collections (
 );
 
 -- Patent Files: Stores files related to a patient collection (One-to-Many)
-CREATE TABLE patent_files (
+CREATE TABLE patient_files (
     id SERIAL PRIMARY KEY,
     patient_collection_id INTEGER NOT NULL REFERENCES patient_collections(id) ON DELETE CASCADE,
     link TEXT NOT NULL,

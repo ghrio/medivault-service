@@ -1,3 +1,8 @@
+-- name: GetRoles :many
+SELECT id, role_name
+FROM roles
+WHERE deleted_at IS NULL;
+
 -- name: GetUsersWithRoles :many
 SELECT users.id, users.name, users.email, roles.role_name
 FROM users

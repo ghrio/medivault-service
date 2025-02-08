@@ -11,19 +11,19 @@ import (
 
 const getFilesByPatientCollection = `-- name: GetFilesByPatientCollection :many
 SELECT id, patient_collection_id, link, created_at, deleted_at
-FROM patent_files
+FROM patient_files
 WHERE patient_collection_id = $1 AND deleted_at IS NULL
 `
 
-func (q *Queries) GetFilesByPatientCollection(ctx context.Context, patientCollectionID int32) ([]PatentFile, error) {
+func (q *Queries) GetFilesByPatientCollection(ctx context.Context, patientCollectionID int32) ([]PatientFile, error) {
 	rows, err := q.db.Query(ctx, getFilesByPatientCollection, patientCollectionID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []PatentFile
+	var items []PatientFile
 	for rows.Next() {
-		var i PatentFile
+		var i PatientFile
 		if err := rows.Scan(
 			&i.ID,
 			&i.PatientCollectionID,
@@ -42,7 +42,7 @@ func (q *Queries) GetFilesByPatientCollection(ctx context.Context, patientCollec
 }
 
 const softDeletePatentFile = `-- name: SoftDeletePatentFile :exec
-UPDATE patent_files
+UPDATE patient_files
 SET deleted_at = NOW()
 WHERE id = $1
 `
@@ -53,7 +53,7 @@ func (q *Queries) SoftDeletePatentFile(ctx context.Context, id int32) error {
 }
 
 const uploadPatentFile = `-- name: UploadPatentFile :one
-INSERT INTO patent_files (patient_collection_id, link, created_at, deleted_at)
+INSERT INTO patient_files (patient_collection_id, link, created_at, deleted_at)
 VALUES ($1, $2, NOW(), NULL)
 RETURNING id, patient_collection_id, link, created_at, deleted_at
 `
@@ -63,9 +63,9 @@ type UploadPatentFileParams struct {
 	Link                string
 }
 
-func (q *Queries) UploadPatentFile(ctx context.Context, arg UploadPatentFileParams) (PatentFile, error) {
+func (q *Queries) UploadPatentFile(ctx context.Context, arg UploadPatentFileParams) (PatientFile, error) {
 	row := q.db.QueryRow(ctx, uploadPatentFile, arg.PatientCollectionID, arg.Link)
-	var i PatentFile
+	var i PatientFile
 	err := row.Scan(
 		&i.ID,
 		&i.PatientCollectionID,

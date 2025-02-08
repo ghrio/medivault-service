@@ -4,25 +4,26 @@ import (
 	"context"
 	db "medivault-service/internal/db/generated"
 	models "medivault-service/internal/db/generated"
+	"medivault-service/internal/repository"
 )
 
-// UserRepoImpl implements UserRepository using sqlc
-type UserRepoImpl struct {
+// UserRepoSqlc implements UserRepository using sqlc
+type UserRepoSqlc struct {
 	Queries *db.Queries // sqlc-generated queries
 }
 
-// NewUserRepository creates a new instance of UserRepoImpl
-func NewUserRepository(q *db.Queries) UserRepository {
-	return &UserRepoImpl{Queries: q}
+// NewUserRepository creates a new instance of UserRepoSqlc
+func NewUserRepository(q *db.Queries) repository.UserRepository {
+	return &UserRepoSqlc{Queries: q}
 }
 
 // GetAllUsers fetches all users
-func (r *UserRepoImpl) GetAllUsers(ctx context.Context) ([]models.User, error) {
+func (r *UserRepoSqlc) GetAllUsers(ctx context.Context) ([]models.User, error) {
 	return r.Queries.GetAllUsers(ctx)
 }
 
 // GetActiveUsers fetches only active users
-func (r *UserRepoImpl) GetActiveUsers(ctx context.Context) ([]models.User, error) {
+func (r *UserRepoSqlc) GetActiveUsers(ctx context.Context) ([]models.User, error) {
 	// Fetch from sqlc-generated query
 	rows, err := r.Queries.GetActiveUsers(ctx)
 	if err != nil {
@@ -47,7 +48,7 @@ func (r *UserRepoImpl) GetActiveUsers(ctx context.Context) ([]models.User, error
 }
 
 // CreateUser inserts a new user
-func (r *UserRepoImpl) CreateUser(ctx context.Context, name, email, password string) (models.User, error) {
+func (r *UserRepoSqlc) CreateUser(ctx context.Context, name, email, password string) (models.User, error) {
 	params := db.CreateUserParams{
 		Name:     name,
 		Email:    email,
@@ -72,7 +73,7 @@ func (r *UserRepoImpl) CreateUser(ctx context.Context, name, email, password str
 }
 
 // UpdateUserEmail updates the email of a user
-func (r *UserRepoImpl) UpdateUserEmail(ctx context.Context, id int32, email string) error {
+func (r *UserRepoSqlc) UpdateUserEmail(ctx context.Context, id int32, email string) error {
 	params := db.UpdateUserEmailParams{
 		Email: email,
 		ID:    id,
@@ -85,6 +86,6 @@ func (r *UserRepoImpl) UpdateUserEmail(ctx context.Context, id int32, email stri
 }
 
 // SoftDeleteUser sets deleted_at to NOW()
-func (r *UserRepoImpl) SoftDeleteUser(ctx context.Context, id int32) error {
+func (r *UserRepoSqlc) SoftDeleteUser(ctx context.Context, id int32) error {
 	return r.Queries.SoftDeleteUser(ctx, id)
 }

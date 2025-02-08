@@ -8,18 +8,18 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type PatentFile struct {
+type PatientCollection struct {
+	ID        int32
+	UserID    int32
+	CreatedAt pgtype.Timestamp
+}
+
+type PatientFile struct {
 	ID                  int32
 	PatientCollectionID int32
 	Link                string
 	CreatedAt           pgtype.Timestamp
 	DeletedAt           pgtype.Timestamp
-}
-
-type PatientCollection struct {
-	ID        int32
-	UserID    int32
-	CreatedAt pgtype.Timestamp
 }
 
 type Role struct {
