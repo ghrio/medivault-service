@@ -1,23 +1,24 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
+	"log"
+	"medivault-service/config"
+	"medivault-service/server"
 )
 
 func main() {
-	router := http.NewServeMux()
-	router.HandleFunc("/games", func(w http.ResponseWriter, r *http.Request) {
-		userAgent := r.UserAgent()
-		fmt.Println(userAgent)
-		w.Write([]byte("Hello, World!"))
-	})
-
-	server := http.Server{
-		Addr:    ":8080",
-		Handler: router,
+	cfg, err := config.LoadConfigENV()
+	if err != nil {
+		log.Fatalf("failed to load config: %v", err)
 	}
-	fmt.Println("Server is listening on Port 8080")
-	server.ListenAndServe()
 
+	err = config.InitDBConnection(cfg)
+	if err != nil {
+		log.Fatalf("failed to initialize database connection: %v", err)
+	}
+
+	err = server.InitServer(&cfg.Server)
+	if err != nil {
+		log.Fatalf("failed to initialize server: %v", err)
+	}
 }

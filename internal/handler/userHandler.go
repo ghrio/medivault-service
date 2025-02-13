@@ -1,6 +1,13 @@
 package handler
 
-import "net/http"
+import (
+	"medivault-service/internal/services"
+	"net/http"
+)
+
+type UserHandler struct {
+	Service services.UserService
+}
 
 //Create User
 

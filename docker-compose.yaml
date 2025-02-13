@@ -15,11 +15,9 @@ services:
 
   app:
     build: .
-    container_name: go_app
+    container_name: medivault-service-container
     depends_on:
       - db
-    environment:
-      DB_SOURCE: "postgresql://user:password@db:5432/mydb?sslmode=disable"
     ports:
       - "8080:8080"
 
