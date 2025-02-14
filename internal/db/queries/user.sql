@@ -26,3 +26,9 @@ WHERE id = $1 AND deleted_at IS NULL;
 SELECT COUNT(*) AS user_count
 FROM users
 WHERE deleted_at IS NULL;
+
+-- name: GetUserByEmail :one
+SELECT id, name, email, password, created_at, updated_at, deleted_at
+FROM users
+WHERE email = $1 AND deleted_at IS NULL;
+RETURNING id, name, email, password, created_at, updated_at, deleted_at;

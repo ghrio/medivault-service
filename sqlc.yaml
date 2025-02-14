@@ -1,10 +1,10 @@
 version: "2"
 sql:
   - engine: "postgresql"
-    schema: "internal/db/schema/schema.sql"  # Path to schema file
-    queries: "internal/db/queries/"  # Path to SQL queries
+    schema: "internal/db/schema/schema.sql" # Path to schema file
+    queries: "internal/db/queries/" # Path to SQL queries
     gen:
       go:
-        package: "db"      # Package name for generated code
-        out: "internal/db/generated"  # Output directory
-        sql_package: "pgx/v5"  # Use pgx for database connection
+        package: "db" # Package name for generated code
+        out: "internal/db/generated" # Output directory
+        sql_package: "pgx/v5" # Use pgx for database connection

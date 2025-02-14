@@ -21,4 +21,13 @@ type PatientFileRepository interface {
 	DeletePatientFile(ctx context.Context, id int) error
 }
 
-type PatientCollectionRepository interface{}
+type PatientCollectionRepository interface {
+	GetPatientCollectionByUser(ctx context.Context, userID int32) (models.PatientCollection, error)
+	CreatePatientCollection(ctx context.Context, userID int32) (models.PatientCollection, error)
+}
+
+type RoleRepository interface {
+	AssignRoleToUser(ctx context.Context, userID, roleID int32) error
+	GetUsersWithRoles(ctx context.Context) ([]models.GetUsersWithRolesRow, error)
+	RemoveRoleFromUser(ctx context.Context, userID, roleID int32) error
+}

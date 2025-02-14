@@ -5,11 +5,14 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 const SECRETKEY = ""
+
+var jwtSecret = []byte("your_secret_key")
 
 func jwtMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -40,4 +43,26 @@ func jwtMiddleware(next http.Handler) http.Handler {
 			}
 		}
 	})
+}
+
+func GenerateJWT(userID string) (string, error) {
+	// Define token expiration time
+	expirationTime := time.Now().Add(24 * time.Hour)
+
+	// Create claims
+	claims := &jwt.RegisteredClaims{
+		Subject:   userID,
+		ExpiresAt: jwt.NewNumericDate(expirationTime),
+	}
+
+	// Create token
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	// Sign token
+	tokenString, err := token.SignedString(jwtSecret)
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, nil
 }

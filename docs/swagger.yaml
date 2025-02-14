@@ -1,4 +1,26 @@
+basePath: /api/v1
+host: localhost:8080
 info:
-  contact: {}
-paths: {}
+  contact:
+    name: API Support
+  description: API documentation for MediVault Service.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: MediVault Service API
+  version: "1.0"
+paths:
+  /api/v1/ping:
+    get:
+      description: Returns a simple "pong" response to indicate the server is running
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: pong
+          schema:
+            type: string
+      summary: Ping the server
+      tags:
+      - health
 swagger: "2.0"

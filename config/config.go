@@ -64,11 +64,13 @@ func LoadConfigOS() (*Config, error) {
 	}, nil
 }
 
+// LoadConfigENV loads the configuration from environment variables
 func LoadConfigENV() (*Config, error) {
 	viper.AutomaticEnv()
 
 	viper.SetDefault("DB_PORT", 5432)
 	viper.SetDefault("SERVER_PORT", 8080)
+	viper.SetDefault("SERVER_HOST", "localhost")
 	viper.SetDefault("SERVER_READ_TIMEOUT", 5)
 	viper.SetDefault("SERVER_WRITE_TIMEOUT", 10)
 
