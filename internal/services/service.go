@@ -20,4 +20,18 @@ type PatientFileService interface {
 	UpdateFile(ctx context.Context, file *models.PatientFile) error
 }
 
-type PatientCollectionService interface{}
+type PatientCollectionService interface {
+	GetPatientCollectionByID(ctx context.Context, id int) (*models.PatientCollection, error)
+	GetAllPatientCollections(ctx context.Context) ([]*models.PatientCollection, error)
+	CreatePatientCollection(ctx context.Context, patientCollection *models.PatientCollection) error
+	UpdatePatientCollection(ctx context.Context, patientCollection *models.PatientCollection) error
+	DeletePatientCollection(ctx context.Context, id int) error
+}
+
+type RoleService interface {
+	GetRoleByID(ctx context.Context, id int) (*models.Role, error)
+	GetAllRoles(ctx context.Context) ([]*models.Role, error)
+	CreateRole(ctx context.Context, role *models.Role) error
+	UpdateRole(ctx context.Context, role *models.Role) error
+	DeleteRole(ctx context.Context, id int) error
+}

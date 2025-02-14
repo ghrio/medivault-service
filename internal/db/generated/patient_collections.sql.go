@@ -3,7 +3,7 @@
 //   sqlc v1.28.0
 // source: patient_collections.sql
 
-package db
+package generated
 
 import (
 	"context"
@@ -30,6 +30,25 @@ WHERE user_id = $1
 
 func (q *Queries) GetPatientCollectionByUser(ctx context.Context, userID int32) (PatientCollection, error) {
 	row := q.db.QueryRow(ctx, getPatientCollectionByUser, userID)
+	var i PatientCollection
+	err := row.Scan(&i.ID, &i.UserID, &i.CreatedAt)
+	return i, err
+}
+
+const updatePatientCollection = `-- name: UpdatePatientCollection :one
+UPDATE patient_collections
+SET user_id = $2
+WHERE id = $1
+RETURNING id, user_id, created_at
+`
+
+type UpdatePatientCollectionParams struct {
+	ID     int32 `json:"id"`
+	UserID int32 `json:"user_id"`
+}
+
+func (q *Queries) UpdatePatientCollection(ctx context.Context, arg UpdatePatientCollectionParams) (PatientCollection, error) {
+	row := q.db.QueryRow(ctx, updatePatientCollection, arg.ID, arg.UserID)
 	var i PatientCollection
 	err := row.Scan(&i.ID, &i.UserID, &i.CreatedAt)
 	return i, err

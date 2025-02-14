@@ -3,7 +3,7 @@
 //   sqlc v1.28.0
 // source: user_role.sql
 
-package db
+package generated
 
 import (
 	"context"
@@ -16,13 +16,44 @@ ON CONFLICT (user_id, role_id) DO UPDATE SET status = TRUE
 `
 
 type AssignRoleToUserParams struct {
-	UserID int32
-	RoleID int32
+	UserID int32 `json:"user_id"`
+	RoleID int32 `json:"role_id"`
 }
 
 func (q *Queries) AssignRoleToUser(ctx context.Context, arg AssignRoleToUserParams) error {
 	_, err := q.db.Exec(ctx, assignRoleToUser, arg.UserID, arg.RoleID)
 	return err
+}
+
+const getRoles = `-- name: GetRoles :many
+SELECT id, role_name
+FROM roles
+WHERE deleted_at IS NULL
+`
+
+type GetRolesRow struct {
+	ID       int32  `json:"id"`
+	RoleName string `json:"role_name"`
+}
+
+func (q *Queries) GetRoles(ctx context.Context) ([]GetRolesRow, error) {
+	rows, err := q.db.Query(ctx, getRoles)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetRolesRow
+	for rows.Next() {
+		var i GetRolesRow
+		if err := rows.Scan(&i.ID, &i.RoleName); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getUsersWithRoles = `-- name: GetUsersWithRoles :many
@@ -34,10 +65,10 @@ WHERE users.deleted_at IS NULL AND roles.deleted_at IS NULL
 `
 
 type GetUsersWithRolesRow struct {
-	ID       int32
-	Name     string
-	Email    string
-	RoleName string
+	ID       int32  `json:"id"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	RoleName string `json:"role_name"`
 }
 
 func (q *Queries) GetUsersWithRoles(ctx context.Context) ([]GetUsersWithRolesRow, error) {
@@ -71,8 +102,8 @@ WHERE user_id = $1 AND role_id = $2
 `
 
 type RemoveRoleFromUserParams struct {
-	UserID int32
-	RoleID int32
+	UserID int32 `json:"user_id"`
+	RoleID int32 `json:"role_id"`
 }
 
 func (q *Queries) RemoveRoleFromUser(ctx context.Context, arg RemoveRoleFromUserParams) error {

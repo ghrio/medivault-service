@@ -3,7 +3,7 @@
 //   sqlc v1.28.0
 // source: patient_files.sql
 
-package db
+package generated
 
 import (
 	"context"
@@ -59,8 +59,8 @@ RETURNING id, patient_collection_id, link, created_at, deleted_at
 `
 
 type UploadPatentFileParams struct {
-	PatientCollectionID int32
-	Link                string
+	PatientCollectionID int32  `json:"patient_collection_id"`
+	Link                string `json:"link"`
 }
 
 func (q *Queries) UploadPatentFile(ctx context.Context, arg UploadPatentFileParams) (PatientFile, error) {

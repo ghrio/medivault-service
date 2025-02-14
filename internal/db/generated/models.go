@@ -2,46 +2,46 @@
 // versions:
 //   sqlc v1.28.0
 
-package db
+package generated
 
 import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type PatientCollection struct {
-	ID        int32
-	UserID    int32
-	CreatedAt pgtype.Timestamp
+	ID        int32            `json:"id"`
+	UserID    int32            `json:"user_id"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
 }
 
 type PatientFile struct {
-	ID                  int32
-	PatientCollectionID int32
-	Link                string
-	CreatedAt           pgtype.Timestamp
-	DeletedAt           pgtype.Timestamp
+	ID                  int32            `json:"id"`
+	PatientCollectionID int32            `json:"patient_collection_id"`
+	Link                string           `json:"link"`
+	CreatedAt           pgtype.Timestamp `json:"created_at"`
+	DeletedAt           pgtype.Timestamp `json:"deleted_at"`
 }
 
 type Role struct {
-	ID        int32
-	RoleName  string
-	CreatedAt pgtype.Timestamp
-	UpdatedAt pgtype.Timestamp
-	DeletedAt pgtype.Timestamp
+	ID        int32            `json:"id"`
+	RoleName  string           `json:"role_name"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+	UpdatedAt pgtype.Timestamp `json:"updated_at"`
+	DeletedAt pgtype.Timestamp `json:"deleted_at"`
 }
 
 type User struct {
-	ID        int32
-	Name      string
-	Email     string
-	Password  string
-	CreatedAt pgtype.Timestamp
-	UpdatedAt pgtype.Timestamp
-	DeletedAt pgtype.Timestamp
+	ID        int32            `json:"id"`
+	Name      string           `json:"name"`
+	Email     string           `json:"email"`
+	Password  string           `json:"password"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+	UpdatedAt pgtype.Timestamp `json:"updated_at"`
+	DeletedAt pgtype.Timestamp `json:"deleted_at"`
 }
 
 type UserRole struct {
-	UserID int32
-	RoleID int32
-	Status bool
+	UserID int32 `json:"user_id"`
+	RoleID int32 `json:"role_id"`
+	Status bool  `json:"status"`
 }

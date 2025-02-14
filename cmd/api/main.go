@@ -11,13 +11,14 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to load config: %v", err)
 	}
-	/*
-		err = config.InitDBConnection(cfg)
-		if err != nil {
-			log.Fatalf("failed to initialize database connection: %v", err)
-		}
-	*/
-	err = server.InitServer(&cfg.Server)
+	log.Println("Config loaded")
+	db, err := config.InitDBConnection(cfg)
+	if err != nil {
+		log.Fatalf("failed to initialize db connection: %v", err)
+	}
+	log.Println("DB connection initialized")
+
+	err = server.InitServer(&cfg.Server, db)
 	if err != nil {
 		log.Fatalf("failed to initialize server: %v", err)
 	}

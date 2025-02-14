@@ -3,13 +3,17 @@ package server
 import (
 	"fmt"
 	"log"
+	"medivault-service/cmd/routes"
 	"medivault-service/config"
+	handler "medivault-service/internal/handler"
 	"medivault-service/internal/middleware"
+	repository "medivault-service/internal/repository/sqlc"
+	"medivault-service/internal/services"
 	"net/http"
 
 	_ "medivault-service/docs" // Import the generated docs
 
-	httpSwagger "github.com/swaggo/http-swagger"
+	"github.com/jackc/pgx/v5"
 )
 
 // @title           MediVault Service API
@@ -21,15 +25,31 @@ import (
 // @host            localhost:8080
 // @BasePath        /api/v1
 
-func InitServer(cfg *config.ServerConfig) error {
+func InitServer(cfg *config.ServerConfig, conn *pgx.Conn) error {
 	r := http.NewServeMux()
 
-	// Serve Swagger UI
-	r.Handle("/swagger/", httpSwagger.Handler(
-		httpSwagger.URL(fmt.Sprintf("http://%s:%d/swagger/doc.json", cfg.Host, cfg.Port)), // The URL pointing to API definition
-	))
-
+	// Registering Repositories
+	userRepo := repository.NewUserRepository(conn)
+	userService := services.NewUserService(userRepo)
+	userHandler := handler.UserHandler{Service: userService}
+	authHandler := handler.AuthenticationHandler{Service: userService}
 	// Registering Middleware
+	userRouter := routes.UserRouter(&userHandler)
+	authenticationRouter := routes.AuthenticationRouter(&authHandler)
+	// Define routes and their corresponding handlers
+	routes := []struct {
+		pattern string
+		handler http.Handler
+	}{
+		{"/api/v1/users/", userRouter},
+		{"/api/v1/auth/", authenticationRouter},
+	}
+
+	// Register routes dynamically
+	for _, route := range routes {
+		r.Handle(route.pattern, route.handler)
+	}
+
 	loggedHandler := middleware.Logging(r)
 
 	srv := &http.Server{

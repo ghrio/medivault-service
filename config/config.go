@@ -8,7 +8,9 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 )
 
@@ -66,8 +68,11 @@ func LoadConfigOS() (*Config, error) {
 
 // LoadConfigENV loads the configuration from environment variables
 func LoadConfigENV() (*Config, error) {
+	// Load .env file
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found")
+	}
 	viper.AutomaticEnv()
-
 	viper.SetDefault("DB_PORT", 5432)
 	viper.SetDefault("SERVER_PORT", 8080)
 	viper.SetDefault("SERVER_HOST", "localhost")
@@ -94,16 +99,21 @@ func LoadConfigENV() (*Config, error) {
 	return config, nil
 }
 
-func InitDBConnection(cfg *Config) error {
+func InitDBConnection(cfg *Config) (*pgx.Conn, error) {
 	dsn := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=%s",
 		cfg.DB.User, cfg.DB.Password, cfg.DB.Host, cfg.DB.Port, cfg.DB.Name, cfg.DB.SSLMode)
 
 	var err error
 	DB, err = pgxpool.New(context.Background(), dsn)
 	if err != nil {
-		return fmt.Errorf("unable to connect to database: %w", err)
+		return nil, fmt.Errorf("unable to connect to database: %w", err)
+	}
+
+	conn, err := pgx.Connect(context.Background(), dsn)
+	if err != nil {
+		return nil, fmt.Errorf("unable to connect to database: %w", err)
 	}
 
 	log.Println("Connected to PostgreSQL")
-	return nil
+	return conn, nil
 }

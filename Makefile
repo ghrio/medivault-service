@@ -18,6 +18,6 @@ docker-compose-up:
 docker-compose-down:
 	docker-compose down
 swagger:
-	swag init -g ./cmd/server/server.go
+	swag init -g cmd/server/server.go --parseDependency --parseInternal
 test-container:
 .PHONY: serve test test-coverage build run docker-build docker-run docker-compose-up docker-compose-down

@@ -3,7 +3,7 @@
 //   sqlc v1.28.0
 // source: roles.sql
 
-package db
+package generated
 
 import (
 	"context"
@@ -37,10 +37,10 @@ WHERE deleted_at IS NULL
 `
 
 type GetActiveRolesRow struct {
-	ID        int32
-	RoleName  string
-	CreatedAt pgtype.Timestamp
-	UpdatedAt pgtype.Timestamp
+	ID        int32            `json:"id"`
+	RoleName  string           `json:"role_name"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+	UpdatedAt pgtype.Timestamp `json:"updated_at"`
 }
 
 func (q *Queries) GetActiveRoles(ctx context.Context) ([]GetActiveRolesRow, error) {
@@ -97,4 +97,29 @@ func (q *Queries) GetAllRoles(ctx context.Context) ([]Role, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateRole = `-- name: UpdateRole :one
+UPDATE roles
+SET role_name = $2, updated_at = NOW()
+WHERE id = $1
+RETURNING id, role_name, created_at, updated_at, deleted_at
+`
+
+type UpdateRoleParams struct {
+	ID       int32  `json:"id"`
+	RoleName string `json:"role_name"`
+}
+
+func (q *Queries) UpdateRole(ctx context.Context, arg UpdateRoleParams) (Role, error) {
+	row := q.db.QueryRow(ctx, updateRole, arg.ID, arg.RoleName)
+	var i Role
+	err := row.Scan(
+		&i.ID,
+		&i.RoleName,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
 }

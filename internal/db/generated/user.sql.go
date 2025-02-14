@@ -3,7 +3,7 @@
 //   sqlc v1.28.0
 // source: user.sql
 
-package db
+package generated
 
 import (
 	"context"
@@ -29,9 +29,9 @@ RETURNING id, name, email, password, created_at, updated_at, deleted_at
 `
 
 type CreateUserParams struct {
-	Name     string
-	Email    string
-	Password string
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
@@ -116,6 +116,28 @@ func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
 	return items, nil
 }
 
+const getUserByEmail = `-- name: GetUserByEmail :one
+SELECT id, name, email, password, created_at, updated_at, deleted_at
+FROM users
+WHERE email = $1 AND deleted_at IS NULL
+LIMIT 1
+`
+
+func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
+	row := q.db.QueryRow(ctx, getUserByEmail, email)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Email,
+		&i.Password,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
 const softDeleteUser = `-- name: SoftDeleteUser :exec
 UPDATE users
 SET deleted_at = NOW()
@@ -134,8 +156,8 @@ WHERE id = $2 AND deleted_at IS NULL
 `
 
 type UpdateUserEmailParams struct {
-	Email string
-	ID    int32
+	Email string `json:"email"`
+	ID    int32  `json:"id"`
 }
 
 func (q *Queries) UpdateUserEmail(ctx context.Context, arg UpdateUserEmailParams) error {

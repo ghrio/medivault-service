@@ -5,14 +5,20 @@ import (
 	db "medivault-service/internal/db/generated"
 	models "medivault-service/internal/db/generated"
 	"medivault-service/internal/repository"
+
+	"github.com/jackc/pgx/v5"
 )
 
 type PatientFileRepoSqlc struct {
 	Queries *db.Queries
+	conn    *pgx.Conn
 }
 
-func NewPatientFileRepositorySqlc(q *db.Queries) repository.PatientFileRepository {
-	return &PatientFileRepoSqlc{Queries: q}
+func NewPatientFileRepositorySqlc(conn *pgx.Conn) repository.PatientFileRepository {
+	return &PatientFileRepoSqlc{
+		Queries: db.New(conn),
+		conn:    conn,
+	}
 }
 
 func (r *PatientFileRepoSqlc) GetAllPatientFiles(ctx context.Context) ([]models.PatientFile, error) {
