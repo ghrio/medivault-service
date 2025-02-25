@@ -23,7 +23,7 @@ type PatientFileRepository interface {
 	DeletePatientFile(ctx context.Context, id int) error
 }
 
-type PatientCollectionRepository interface {
+type PatientFileCollectionRepository interface {
 	GetPatientCollectionByUser(ctx context.Context, userID int32) (generated.PatientCollection, error)
 	CreatePatientCollection(ctx context.Context, userID int32) (generated.PatientCollection, error)
 }

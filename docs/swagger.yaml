@@ -1,0 +1,659 @@
+basePath: /api/v1
+definitions:
+  github_com_jackc_pgx_v5_pgtype.InfinityModifier:
+    enum:
+    - 1
+    - 0
+    - -1
+    type: integer
+    x-enum-varnames:
+    - Infinity
+    - Finite
+    - NegativeInfinity
+  github_com_jackc_pgx_v5_pgtype.Timestamp:
+    properties:
+      infinityModifier:
+        $ref: '#/definitions/github_com_jackc_pgx_v5_pgtype.InfinityModifier'
+      time:
+        description: Time zone will be ignored when encoding to PostgreSQL.
+        type: string
+      valid:
+        type: boolean
+    type: object
+  internal_handler.PatientFile:
+    properties:
+      created_at:
+        $ref: '#/definitions/github_com_jackc_pgx_v5_pgtype.Timestamp'
+      deleted_at:
+        $ref: '#/definitions/github_com_jackc_pgx_v5_pgtype.Timestamp'
+      id:
+        type: integer
+      link:
+        type: string
+      patient_collection_id:
+        type: integer
+    type: object
+  internal_handler.PatientFileCollection:
+    properties:
+      created_at:
+        $ref: '#/definitions/github_com_jackc_pgx_v5_pgtype.Timestamp'
+      id:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  internal_handler.Role:
+    properties:
+      created_at:
+        $ref: '#/definitions/github_com_jackc_pgx_v5_pgtype.Timestamp'
+      deleted_at:
+        $ref: '#/definitions/github_com_jackc_pgx_v5_pgtype.Timestamp'
+      id:
+        type: integer
+      role_name:
+        type: string
+      updated_at:
+        $ref: '#/definitions/github_com_jackc_pgx_v5_pgtype.Timestamp'
+    type: object
+  internal_handler.User:
+    properties:
+      created_at:
+        $ref: '#/definitions/github_com_jackc_pgx_v5_pgtype.Timestamp'
+      deleted_at:
+        $ref: '#/definitions/github_com_jackc_pgx_v5_pgtype.Timestamp'
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      password:
+        type: string
+      updated_at:
+        $ref: '#/definitions/github_com_jackc_pgx_v5_pgtype.Timestamp'
+    type: object
+  medivault-service_pkg_utils.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    name: API Support
+  description: API documentation for MediVault Service.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: MediVault Service API
+  version: "1.0"
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Logs in a user
+      parameters:
+      - description: User email
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: User password
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+      summary: Login a user
+      tags:
+      - authentication
+  /logout:
+    post:
+      consumes:
+      - application/json
+      description: Logs out a user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+      summary: Logout a user
+      tags:
+      - authentication
+  /patientFileCollections/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all patientFileCollections by patient ID
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.PatientFileCollection'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+      summary: Get all patientFileCollections by patient ID
+      tags:
+      - patientFileCollections
+  /patientFiles:
+    post:
+      consumes:
+      - application/json
+      description: Register a new patient file in the system
+      parameters:
+      - description: PatientFile data
+        in: body
+        name: patientFile
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler.PatientFile'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_handler.PatientFile'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+      summary: Create a new patient file
+      tags:
+      - patientFiles
+  /patientFiles/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a patient file in the system
+      parameters:
+      - description: PatientFile ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/internal_handler.PatientFile'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+      summary: Delete a patient file
+      tags:
+      - patientFiles
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all patient files by patient ID
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.PatientFile'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+      summary: Get all patient files by patient ID
+      tags:
+      - patientFiles
+    put:
+      consumes:
+      - application/json
+      description: Update a patient file in the system
+      parameters:
+      - description: PatientFile ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: PatientFile data
+        in: body
+        name: patientFile
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler.PatientFile'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.PatientFile'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+      summary: Update a patient file
+      tags:
+      - patientFiles
+  /refresh:
+    post:
+      consumes:
+      - application/json
+      description: Refreshes a user token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+      summary: Refresh a user token
+      tags:
+      - authentication
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_handler.User'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+      summary: Get all users
+      tags:
+      - users
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user in the system
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/internal_handler.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+      summary: Delete a user
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+      summary: Get user by ID
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Update a user in the system
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+      summary: Update a user
+      tags:
+      - users
+  /users/{id}/role:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a role from a user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Role data
+        in: body
+        name: role
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler.Role'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+      summary: Remove a role from a user
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Assign a role to a user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Role data
+        in: body
+        name: role
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler.Role'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+      summary: Assign a role to a user
+      tags:
+      - users
+  /users/active:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all active users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_handler.User'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+      summary: Get all active users
+      tags:
+      - users
+  /users/create:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user in the system
+      parameters:
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_handler.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+      summary: Create a new user
+      tags:
+      - users
+  /users/email/{email}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a user by email
+      parameters:
+      - description: User email
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+      summary: Get user by email
+      tags:
+      - users
+  /users/roles:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all users with roles
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_handler.User'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/medivault-service_pkg_utils.ErrorResponse'
+      summary: Get all users with roles
+      tags:
+      - users
+swagger: "2.0"

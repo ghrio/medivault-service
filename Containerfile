@@ -17,14 +17,17 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o app ./cmd/api/main.go
 # 🔹 Stage 2: Create a minimal runtime image
 FROM alpine:latest
 
-# Install PostgreSQL client (for health checks/debugging)
-RUN apk add --no-cache postgresql-client
+# Install necessary packages (e.g., CA certificates)
+RUN apk add --no-cache ca-certificates
 
 # Set working directory
 WORKDIR /root/
 
 # Copy the compiled binary from builder stage
 COPY --from=builder /app/app .
+
+# Ensure the binary has execution permissions
+RUN chmod +x ./app
 
 # Expose the port your Go app runs on
 EXPOSE 8080

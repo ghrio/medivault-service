@@ -20,7 +20,7 @@ type PatientFileService interface {
 	UpdateFile(ctx context.Context, file *models.PatientFile) error
 }
 
-type PatientCollectionService interface {
+type PatientFileCollectionService interface {
 	GetPatientCollectionByID(ctx context.Context, id int) (*models.PatientCollection, error)
 	GetAllPatientCollections(ctx context.Context) ([]*models.PatientCollection, error)
 	CreatePatientCollection(ctx context.Context, patientCollection *models.PatientCollection) error

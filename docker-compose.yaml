@@ -14,7 +14,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   app:
-    build: .
+    build: ./Containerfile
     container_name: medivault-service-container
     depends_on:
       - db

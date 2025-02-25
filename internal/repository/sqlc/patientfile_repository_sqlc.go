@@ -14,7 +14,7 @@ type PatientFileRepoSqlc struct {
 	conn    *pgx.Conn
 }
 
-func NewPatientFileRepositorySqlc(conn *pgx.Conn) repository.PatientFileRepository {
+func NewPatientFileRepository(conn *pgx.Conn) repository.PatientFileRepository {
 	return &PatientFileRepoSqlc{
 		Queries: db.New(conn),
 		conn:    conn,
